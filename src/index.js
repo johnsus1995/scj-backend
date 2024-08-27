@@ -16,7 +16,9 @@ sequelize
   .authenticate()
   .then(async () => {
     console.log(`Connected to DB:-${process.env.DB_NAME}`);
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: true }).then(() => {
+      console.log('synced db');
+    });
     app.listen(port, () => console.log(`Server running on ${port}`));
   })
   .catch((err) => {

@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import sequelize from '../models/index.js';
+import User from '../models/User.model.js';
 
 const app = express();
 app.use(cors());
@@ -18,6 +19,7 @@ sequelize
     console.log(`Connected to DB:-${process.env.DB_NAME}`);
     await sequelize.sync({ alter: true }).then(() => {
       console.log('synced db');
+      // const models = [User];
     });
     app.listen(port, () => console.log(`Server running on ${port}`));
   })

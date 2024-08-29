@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import sequelize from '../models/index.js';
-import User from '../models/User.model.js';
+import sequelize from './models/index.js';
+import User from './models/User.model.js';
+
+import authRoutes from './routes/auth.route.js';
 
 const app = express();
 app.use(cors());
@@ -10,8 +12,7 @@ const port = process.env.PORT || 9000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const routes = [];
-routes.forEach((route) => app.use('/api', route.router));
+app.use('/api/auth', authRoutes);
 
 sequelize
   .authenticate()

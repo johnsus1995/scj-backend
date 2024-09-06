@@ -2,19 +2,22 @@ module.exports = {
   up: (queryInterface, Sequelize) =>
     queryInterface.createTable("Users", {
       id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
         type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
       },
       firstName: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
       lastName: {
         type: Sequelize.STRING,
       },
       email: {
         type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
       },
       password: {
         type: Sequelize.STRING,
@@ -26,14 +29,28 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
+      verifyToken: {
+        type: Sequelize.STRING,
+        defaultValue: null,
+      },
+      isVerified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
-        allowNull: false,
         type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.fn('NOW'),
       },
       updatedAt: {
+        type: Sequelize.DATE,
         allowNull: false,
+        defaultValue: Sequelize.fn('NOW'),
+      },
+      deletedAt: {
         type: Sequelize.DATE,
       },
     }),
+
   down: (queryInterface, Sequelize) => queryInterface.dropTable("Users"),
 };

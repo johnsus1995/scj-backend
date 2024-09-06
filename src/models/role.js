@@ -4,9 +4,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    description: {
-      type: DataTypes.STRING,
-    },
+  },{
+    timestamps: true,
+    paranoid: true,
   });
 
   // eslint-disable-next-line func-names

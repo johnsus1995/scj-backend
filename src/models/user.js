@@ -50,6 +50,8 @@ module.exports = (sequelize, DataTypes) => {
           attributes: { include: ["password", "verifyToken", "isAdmin"] },
         },
       },
+      timestamps: true,
+      paranoid: true,
     }
   );
 
@@ -63,3 +65,4 @@ module.exports = (sequelize, DataTypes) => {
 
   return User;
 };
+

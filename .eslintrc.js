@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  extends: "airbnb-base",
+  // extends: "airbnb-base",
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",
@@ -13,8 +13,10 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
-    quotes: ["error", "double", { avoidEscape: true }],
-    "comma-dangle": ["error", "always-multiline"],
-    "implicit-arrow-linebreak": "off",
+    // quotes: ["error", "double", { avoidEscape: true }],
+    // "comma-dangle": ["error", "always-multiline"],
+    // "implicit-arrow-linebreak": "off",
+    // "arrow-body-style": "off"
+
   },
 };

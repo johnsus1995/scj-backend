@@ -24,5 +24,5 @@ module.exports = {
       },
     }),
 
-  down: (queryInterface, Sequelize) => queryInterface.dropTable("Roles"),
+  down: queryInterface => queryInterface.dropTable("Roles"),
 };

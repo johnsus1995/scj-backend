@@ -1,15 +1,21 @@
-import express from 'express';
-import dotenv from 'dotenv';
+const express = require('express');
+const dotenv = require('dotenv');
 
-import bodyParser from 'body-parser';
-import cors from 'cors';
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-import publicRoutes from './src/routes/public';
-import apiRoutes from './src/routes/api';
-import adminRoutes from './src/routes/admin';
-import apiMiddleware from './src/middleware/apiAuth';
-import adminMiddleware from './src/middleware/adminAuth';
-import errorHandler from './src/middleware/errorHandler';
+const publicRoutes = require('./src/routes/public');
+
+const apiRoutes = require('./src/routes/api');
+
+const adminRoutes = require('./src/routes/admin');
+
+const apiMiddleware = require('./src/middleware/apiAuth');
+
+const adminMiddleware = require('./src/middleware/adminAuth');
+
+const errorHandler = require('./src/middleware/errorHandler');
+
 
 dotenv.config();
 require('./src/config/sequelize');

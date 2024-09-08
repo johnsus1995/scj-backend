@@ -16,3 +16,7 @@ const createExam = async (req, res) => {
     return errorResponse(req, res, error.message);
   }
 };
+
+module.exports = {
+  createExam,
+};

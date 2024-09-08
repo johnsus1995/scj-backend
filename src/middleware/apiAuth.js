@@ -1,5 +1,6 @@
-import { errorResponse } from '../helpers';
-import { User } from '../models';
+
+const errorResponse = require('../helpers')
+const User = require('../models')
 
 const jwt = require('jsonwebtoken');
 
@@ -31,4 +32,4 @@ const apiAuth = async (req, res, next) => {
   }
 };
 
-export default apiAuth;
+module.exports = apiAuth;

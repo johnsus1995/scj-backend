@@ -48,6 +48,12 @@ module.exports = (sequelize, DataTypes) => {
       as: "questions", // Alias for this association
       onDelete: "CASCADE", // Optional: If an exam is deleted, delete related questions
     });
+
+    Exam.hasMany(models.Answer, {
+      foreignKey: "examId",
+      as: "answers",
+      onDelete: "CASCADE", 
+    });
   };
 
 

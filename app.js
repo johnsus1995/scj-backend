@@ -9,6 +9,7 @@ const publicRoutes = require("./src/routes/public");
 // const apiRoutes = require('./src/routes/api');
 const examRoutes = require("./src/routes/exam");
 const questionRoutes = require("./src/routes/question");
+const answerRoutes = require("./src/routes/answer");
 const adminRoutes = require("./src/routes/admin");
 const apiMiddleware = require("./src/middleware/apiAuth");
 const adminMiddleware = require("./src/middleware/adminAuth");
@@ -30,6 +31,7 @@ app.use("/public", publicRoutes);
 // app.use('/api', apiMiddleware, apiRoutes);
 app.use("/api/exam", apiMiddleware, examRoutes);
 app.use("/api/question", apiMiddleware, questionRoutes);
+app.use("/api/answer", apiMiddleware, answerRoutes);
 
 app.use("/api/admin", apiMiddleware, adminMiddleware, adminRoutes);
 app.use(errorHandler);

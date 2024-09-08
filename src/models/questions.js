@@ -19,17 +19,6 @@ module.exports = (sequelize, DataTypes) => {
           key: "id",
         },
       },
-      // createdAt: {
-      //   type: DataTypes.DATE,
-      //   allowNull: false,
-      // },
-      // updatedAt: {
-      //   type: DataTypes.DATE,
-      //   allowNull: false,
-      // },
-      // deletedAt: {
-      //   type: DataTypes.DATE,
-      // },
     },
     {
       timestamps: true, // adds `createdAt` and `updatedAt`
@@ -43,6 +32,12 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "examId",
       as: "exam", // Alias for this association
       onDelete: "CASCADE", // Optional: If an exam is deleted, delete the related questions
+    });
+
+    Question.hasOne(models.Answer, {
+      foreignKey: "questionId",
+      as: "correctAnswer",
+      onDelete: "CASCADE", // If a question is deleted, the associated answer should also be deleted
     });
   };
 

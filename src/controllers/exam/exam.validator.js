@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-const validateCreateExam = {
+const createExam = {
   body: {
     title: Joi.string().required(),
     description: Joi.string().required(),
@@ -10,5 +10,5 @@ const validateCreateExam = {
 };
 
 module.exports = {
-  validateCreateExam,
+  createExam,
 };

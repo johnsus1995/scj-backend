@@ -2,7 +2,7 @@ module.exports = {
   env: {
     browser: true,
     es6: true,
-    node: true
+    node: true,
   },
   // extends: "airbnb-base",
   extends: ["eslint:recommended"],
@@ -21,7 +21,7 @@ module.exports = {
     // "arrow-body-style": "off",
     "no-unused-vars": ["warn"],
     "no-undef": "error",
-    'import/no-unresolved': 'off', // Disable if using CommonJS and not ES modules
-
+    "import/no-unresolved": "off", // Disable if using CommonJS and not ES modules
+    "no-unreachable": "off",
   },
 };

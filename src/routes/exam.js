@@ -8,10 +8,10 @@ const examValidator = require("../controllers/exam/exam.validator");
 //= ===============================
 // API routes
 //= ===============================
-router.get("/me", {});
+// router.get("/me", {});
 router.post(
   "/create",
-  validate(examValidator.changePassword),
+  validate(examValidator.createExam),
   examController.createExam
 );
 

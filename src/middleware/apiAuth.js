@@ -1,22 +1,24 @@
+const { errorResponse } = require("../helpers");
+const { User } = require("../models/");
 
-const errorResponse = require('../helpers')
-const User = require('../models')
-
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 const apiAuth = async (req, res, next) => {
-  if (!(req.headers && req.headers['x-token'])) {
-    return errorResponse(req, res, 'Token is not provided', 401);
+  // console.log(req.headers)
+  // return res.send("hi")
+
+  if (!(req.headers && req.headers["x-token"])) {
+    return errorResponse(req, res, "Token is not provided", 401);
   }
-  const token = req.headers['x-token'];
+  const token = req.headers["x-token"];
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
     req.user = decoded.user;
-    const user = await User.scope('withSecretColumns').findOne({
+    const user = await User.scope("withSecretColumns").findOne({
       where: { email: req.user.email },
     });
     if (!user) {
-      return errorResponse(req, res, 'User is not found in system', 401);
+      return errorResponse(req, res, "User is not found in system", 401);
     }
     const reqUser = { ...user.get() };
     reqUser.userId = user.id;
@@ -26,8 +28,8 @@ const apiAuth = async (req, res, next) => {
     return errorResponse(
       req,
       res,
-      'Incorrect token is provided, try re-login',
-      401,
+      "Incorrect token is provided, try re-login",
+      401
     );
   }
 };

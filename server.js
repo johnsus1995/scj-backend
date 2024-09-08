@@ -77,6 +77,7 @@ const setUpExpress = () => {
   process.on('unhandledRejection', (err) => {
     console.log(chalk.bgRed('UNHANDLED REJECTION! 💥 Shutting down...'));
     console.log(err.name, err.message);
+    console.log(err);
     // Close server & exit process
     server.close(() => {
       process.exit(1);

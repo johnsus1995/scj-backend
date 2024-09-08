@@ -15,4 +15,6 @@ router.post(
   examController.createExam
 );
 
+router.delete("/:id", examController.deleteExam);
+
 module.exports = router;

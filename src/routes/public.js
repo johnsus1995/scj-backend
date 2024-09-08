@@ -13,11 +13,8 @@ const router = express.Router();
 router.post("/login", validate(userValidator.login), userController.login);
 router.post(
   "/register",
-  // validate(userValidator.register),
+  validate(userValidator.register),
   userController.register,
-  // (req, res) => {
-  //   res.send("hi");
-  // }
 );
 
 module.exports = router;

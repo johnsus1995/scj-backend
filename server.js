@@ -6,6 +6,7 @@ const cluster = require('cluster');
 const numCores = require('os').cpus().length;
 const app = require('./app');
 
+
 // Handle uncaught exceptions
 process.on('uncaughtException', (uncaughtExc) => {
   // Won't execute

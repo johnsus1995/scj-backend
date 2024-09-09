@@ -1,6 +1,6 @@
 const { successResponse, errorResponse } = require("../../helpers");
 const { Question } = require("../../models");
-const { Exam } = require("../../models");
+const { Exam, Answer } = require("../../models");
 
 const createAnswer = async (req, res) => {
   try {
@@ -25,10 +25,10 @@ const createAnswer = async (req, res) => {
     const payload = {
       examId,
       questionId,
-      answer
+      answer,
     };
 
-    const newQuestion = await Question.create(payload);
+    const newQuestion = await Answer.create(payload);
     return successResponse(req, res, newQuestion);
   } catch (error) {
     return errorResponse(req, res, error.message);

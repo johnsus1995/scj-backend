@@ -1,5 +1,13 @@
 const yup = require("yup");
 
+const loginSchema = yup.object().shape({
+  email: yup
+    .string()
+    .email("Invalid email format")
+    .required("Email is required"),
+  password: yup.string().required("Password is required")
+});
+
 const registerSchema = yup.object().shape({
   firstName: yup.string().required("First name is required"),
   lastName: yup.string().required("Last name is required"),
@@ -22,4 +30,5 @@ const registerSchema = yup.object().shape({
 
 module.exports = {
   registerSchema,
+  loginSchema
 };

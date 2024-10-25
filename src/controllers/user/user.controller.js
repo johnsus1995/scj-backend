@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const { User } = require("../../models");
 const { successResponse, errorResponse, uniqueId } = require("../../helpers");
-const { registerSchema } = require("./user.validator");
+const { registerSchema, loginSchema } = require("./user.validator");
 
 const allUsers = async (req, res) => {
   try {
@@ -37,7 +37,7 @@ const register = async (req, res) => {
     await registerSchema
       .validate(req.body, { abortEarly: false })
       .catch((err) => {
-        const validationErrors = err.errors
+        const validationErrors = err.errors;
         throw { message: "Validation failed", validationErrors };
       });
 
@@ -54,25 +54,27 @@ const register = async (req, res) => {
     await User.create(payload);
     return successResponse(req, res, {});
   } catch (error) {
-    // Custom error handling for validation errors
     if (error.validationErrors) {
-      return errorResponse(req, res, error.message, 400, error.validationErrors);
+      return errorResponse(
+        req,
+        res,
+        error.message,
+        400,
+        error.validationErrors
+      );
     }
 
     return errorResponse(req, res, error.message);
   }
 };
 
-
-
-
-
-
-
-
-
 const login = async (req, res) => {
   try {
+    await loginSchema.validate(req.body, { abortEarly: false }).catch((err) => {
+      const validationErrors = err.errors;
+      throw { message: "Validation failed", validationErrors };
+    });
+
     const user = await User.scope("withSecretColumns").findOne({
       where: { email: req.body.email },
     });
@@ -99,6 +101,15 @@ const login = async (req, res) => {
     delete user.dataValues.password;
     return successResponse(req, res, { user, token });
   } catch (error) {
+    if (error.validationErrors) {
+      return errorResponse(
+        req,
+        res,
+        error.message,
+        400,
+        error.validationErrors
+      );
+    }
     return errorResponse(req, res, error.message);
   }
 };

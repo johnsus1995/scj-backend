@@ -1,9 +1,7 @@
 const express = require("express");
-const validate = require("express-validation");
 const router = express.Router();
 
 const questionController = require("../controllers/question/question.controller");
-const questionValidator = require("../controllers/question/question.validator");
 
 //= ===============================
 // API routes
@@ -11,7 +9,6 @@ const questionValidator = require("../controllers/question/question.validator");
 
 router.post(
   "/create",
-  validate(questionValidator.createQuestion),
   questionController.createQuestion
 );
 

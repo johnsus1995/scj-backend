@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 const successResponse = (req, res, data, code = 200) =>
   res.send({
     code,
@@ -12,7 +13,7 @@ const errorResponse = (
   code = 500,
   error = {}
 ) =>
-  res.status(500).json({
+  res.status(code).json({
     code,
     errorMessage,
     error,

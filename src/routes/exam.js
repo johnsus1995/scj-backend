@@ -1,9 +1,7 @@
 const express = require("express");
-const validate = require("express-validation");
 const router = express.Router();
 
 const examController = require("../controllers/exam/exam.controller");
-const examValidator = require("../controllers/exam/exam.validator");
 
 //= ===============================
 // API routes
@@ -11,7 +9,6 @@ const examValidator = require("../controllers/exam/exam.validator");
 // router.get("/me", {});
 router.post(
   "/create",
-  validate(examValidator.createExam),
   examController.createExam
 );
 

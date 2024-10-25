@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
-const axios = require("axios");
 const { User } = require("../../models");
 const { successResponse, errorResponse, uniqueId } = require("../../helpers");
+const { registerSchema } = require("./user.validator");
 
 const allUsers = async (req, res) => {
   try {
@@ -26,27 +26,6 @@ const register = async (req, res) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
-    
-    if (process.env.IS_GOOGLE_AUTH_ENABLE === "true") {
-      if (!req.body.code) {
-        throw new Error("code must be defined");
-      }
-      const { code } = req.body;
-      const customUrl = `${process.env.GOOGLE_CAPTCHA_URL}?secret=${process.env.GOOGLE_CAPTCHA_SECRET_SERVER}&response=${code}`;
-      const response = await axios({
-        method: "post",
-        url: customUrl,
-        data: {
-          secret: process.env.GOOGLE_CAPTCHA_SECRET_SERVER,
-          response: code,
-        },
-        config: { headers: { "Content-Type": "multipart/form-data" } },
-      });
-      if (!(response && response.data && response.data.success === true)) {
-        throw new Error("Google captcha is not valid");
-      }
-    }
-
     const user = await User.scope("withSecretColumns").findOne({
       where: { email },
     });
@@ -54,6 +33,13 @@ const register = async (req, res) => {
     if (user) {
       throw new Error("User already exists with same email");
     }
+
+    await registerSchema
+      .validate(req.body, { abortEarly: false })
+      .catch((err) => {
+        const validationErrors = err.errors
+        throw { message: "Validation failed", validationErrors };
+      });
 
     const reqPass = crypto.createHash("md5").update(password).digest("hex");
     const payload = {
@@ -68,9 +54,22 @@ const register = async (req, res) => {
     await User.create(payload);
     return successResponse(req, res, {});
   } catch (error) {
+    // Custom error handling for validation errors
+    if (error.validationErrors) {
+      return errorResponse(req, res, error.message, 400, error.validationErrors);
+    }
+
     return errorResponse(req, res, error.message);
   }
 };
+
+
+
+
+
+
+
+
 
 const login = async (req, res) => {
   try {

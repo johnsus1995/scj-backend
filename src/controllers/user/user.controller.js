@@ -31,7 +31,7 @@ const register = async (req, res) => {
     });
 
     if (user) {
-      throw new Error("User already exists with same email");
+      throw new Error("User already exists with the same email, please login.");
     }
 
     await registerSchema
@@ -52,7 +52,7 @@ const register = async (req, res) => {
     };
 
     await User.create(payload);
-    return successResponse(req, res, {});
+    return successResponse(res, {}, 200, "Register Success, please login now.");
   } catch (error) {
     if (error.validationErrors) {
       return errorResponse(
@@ -99,7 +99,7 @@ const login = async (req, res) => {
       process.env.SECRET
     );
     delete user.dataValues.password;
-    return successResponse(req, res, { user, token });
+    return successResponse(res, { user, token }, 201, "Welcome back!");
   } catch (error) {
     if (error.validationErrors) {
       return errorResponse(

@@ -1,7 +1,8 @@
 /* eslint-disable no-useless-escape */
-const successResponse = (req, res, data, code = 200) =>
+const successResponse = (res, data, code = 200, message = "") =>
   res.send({
     code,
+    message,
     data,
     success: true,
   });

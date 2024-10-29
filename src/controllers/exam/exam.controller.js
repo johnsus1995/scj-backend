@@ -13,7 +13,7 @@ const createExam = async (req, res) => {
     };
 
     const newExam = await Exam.create(payload);
-    return successResponse(req, res, newExam);
+    return successResponse(res, newExam,200,"New exam added.");
   } catch (error) {
     return errorResponse(req, res, error.message);
   }

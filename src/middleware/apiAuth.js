@@ -4,13 +4,11 @@ const { User } = require("../models/");
 const jwt = require("jsonwebtoken");
 
 const apiAuth = async (req, res, next) => {
-  // console.log(req.headers)
-  // return res.send("hi")
-
-  if (!(req.headers && req.headers["x-token"])) {
+  if (!(req.headers && req.headers["authorization"])) {
     return errorResponse(req, res, "Token is not provided", 401);
   }
-  const token = req.headers["x-token"];
+  const token = req.headers["authorization"].substring(7);
+
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
     req.user = decoded.user;

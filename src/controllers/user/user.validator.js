@@ -1,11 +1,11 @@
-const yup = require("yup");
+import yup from "yup";
 
 const loginSchema = yup.object().shape({
   email: yup
     .string()
     .email("Invalid email format")
     .required("Email is required"),
-  password: yup.string().required("Password is required")
+  password: yup.string().required("Password is required"),
 });
 
 const registerSchema = yup.object().shape({
@@ -30,5 +30,5 @@ const registerSchema = yup.object().shape({
 
 module.exports = {
   registerSchema,
-  loginSchema
+  loginSchema,
 };

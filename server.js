@@ -1,10 +1,9 @@
-require('@babel/register');
-/* eslint-disable no-console */
-const chalk = require('chalk');
-const dotenv = require('dotenv');
-const cluster = require('cluster');
-const numCores = require('os').cpus().length;
-const app = require('./app');
+import chalk from 'chalk';
+import dotenv from 'dotenv';
+import cluster from 'cluster';
+import os from 'os';
+import app from './app.js';
+
 
 
 // Handle uncaught exceptions

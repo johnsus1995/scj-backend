@@ -1,22 +1,15 @@
-const express = require("express");
-const dotenv = require("dotenv");
+import express from "express";
+import dotenv from "dotenv";
+import bodyParser from "body-parser";
+import cors from "cors";
 
-const bodyParser = require("body-parser");
-const cors = require("cors");
+import publicRoutes from "./src/routes/public.js";
 
-const publicRoutes = require("./src/routes/public");
-
-// const apiRoutes = require('./src/routes/api');
-const examRoutes = require("./src/routes/exam");
-const questionRoutes = require("./src/routes/question");
-const answerRoutes = require("./src/routes/answer");
-const adminRoutes = require("./src/routes/admin");
-const apiMiddleware = require("./src/middleware/apiAuth");
-const adminMiddleware = require("./src/middleware/adminAuth");
-const errorHandler = require("./src/middleware/errorHandler");
+import apiMiddleware from "./src/middleware/apiAuth.js";
+import adminMiddleware from "./src/middleware/adminAuth.js";
+import errorHandler from "./src/middleware/errorHandler.js";
 
 dotenv.config();
-require("./src/config/sequelize");
  
 const app = express();
 app.use(
@@ -28,12 +21,6 @@ app.use(
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/public", publicRoutes);
-// app.use('/api', apiMiddleware, apiRoutes);
-app.use("/api/exam", apiMiddleware, examRoutes);
-app.use("/api/question", apiMiddleware, questionRoutes);
-app.use("/api/answer", apiMiddleware, answerRoutes);
-
-app.use("/api/admin", apiMiddleware, adminMiddleware, adminRoutes);
 app.use(errorHandler);
 
-module.exports = app;
+export default app

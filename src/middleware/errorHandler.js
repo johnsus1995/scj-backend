@@ -1,4 +1,5 @@
-const { errorResponse } = require("../helpers");
+import { errorResponse } from "../helpers/index.js";
+
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
@@ -13,4 +14,4 @@ const errorHandler = (err, req, res, next) => {
   }
 };
 
-module.exports = errorHandler;
+export default errorHandler

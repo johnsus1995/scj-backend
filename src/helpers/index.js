@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-const successResponse = (res, data, code = 200, message = "") =>
+export const successResponse = (res, data, code = 200, message = "") =>
   res.send({
     code,
     message,
@@ -7,7 +7,7 @@ const successResponse = (res, data, code = 200, message = "") =>
     success: true,
   });
 
-const errorResponse = (
+export const errorResponse = (
   req,
   res,
   errorMessage = "Something went wrong",
@@ -22,13 +22,13 @@ const errorResponse = (
     success: false,
   });
 
-const validateEmail = (email) => {
+export const validateEmail = (email) => {
   const re =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 };
 
-const validateFields = (object, fields) => {
+export const validateFields = (object, fields) => {
   const errors = [];
   fields.forEach((f) => {
     if (!(object && object[f])) {
@@ -38,7 +38,7 @@ const validateFields = (object, fields) => {
   return errors.length ? `${errors.join(", ")} are required fields.` : "";
 };
 
-const uniqueId = (length = 13) => {
+export const uniqueId = (length = 13) => {
   let result = "";
   const characters =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -49,10 +49,3 @@ const uniqueId = (length = 13) => {
   return result;
 };
 
-module.exports = {
-  successResponse,
-  errorResponse,
-  validateEmail,
-  validateFields,
-  uniqueId,
-};

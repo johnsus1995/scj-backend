@@ -1,6 +1,6 @@
 import yup from "yup";
 
-const loginSchema = yup.object().shape({
+export const loginSchema = yup.object().shape({
   email: yup
     .string()
     .email("Invalid email format")
@@ -8,9 +8,10 @@ const loginSchema = yup.object().shape({
   password: yup.string().required("Password is required"),
 });
 
-const registerSchema = yup.object().shape({
-  firstName: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
+export const registerSchema = yup.object().shape({
+  scjId: yup.string().required("SCJ ID is required"),
+  name: yup.string().required("First name is required"),
+  roleId: yup.number().required("Role ID is required"),
   email: yup
     .string()
     .email("Invalid email format")
@@ -24,11 +25,4 @@ const registerSchema = yup.object().shape({
     .oneOf([yup.ref("password"), null], "Passwords must match")
     .required("Confirm password is required"),
   isAdmin: yup.boolean().required("Admin status is required"),
-  roleId: yup.number().required("Role ID is required"),
-  scjId: yup.string().required("SCJ ID is required"),
 });
-
-module.exports = {
-  registerSchema,
-  loginSchema,
-};

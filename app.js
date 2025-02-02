@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 
 import publicRoutes from "./src/routes/public.js";
+import userRoutes from "./src/routes/users.js";
 
 import apiMiddleware from "./src/middleware/apiAuth.js";
 import adminMiddleware from "./src/middleware/adminAuth.js";
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
 app.use("/public", publicRoutes);
+app.use("/api", userRoutes);
 app.use(errorHandler);
 
 app.use("/test", (req, res) => {

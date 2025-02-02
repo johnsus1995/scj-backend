@@ -1016,9 +1016,9 @@ drizzle-orm-pg@^0.16.3:
   integrity sha512-KohmZ3AbDP6waq3AG6+fMK7dkCmLJo2lWThioLDluveY/6E4Y44YLaWiZKg3dtq/SaawnyMa9jOy6FqLw29xyQ==
 
 drizzle-orm@^0.39.0:
-  version "0.39.0"
-  resolved "https://registry.yarnpkg.com/drizzle-orm/-/drizzle-orm-0.39.0.tgz#bf9422c981822a9c04158d64a9889e2d8128f7ae"
-  integrity sha512-kkZwo3Jvht0fdJD/EWGx0vYcEK0xnGrlNVaY07QYluRZA9N21B9VFbY+54bnb/1xvyzcg97tE65xprSAP/fFGQ==
+  version "0.39.1"
+  resolved "https://registry.yarnpkg.com/drizzle-orm/-/drizzle-orm-0.39.1.tgz#92642e4c7b8b3240630d9475d9175563072e53c6"
+  integrity sha512-2bDHlzTY31IDmrYn8i+ZZrxK8IyBD4mPZ7JmZdVDQj2tpBZXs/gxB/1kK5pSvkjxPUMNOVsTnoGkSltgjuJwcA==
 
 dunder-proto@^1.0.0, dunder-proto@^1.0.1:
   version "1.0.1"

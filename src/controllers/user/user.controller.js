@@ -42,7 +42,6 @@ export const register = async (req, res) => {
         createdAt: new Date(),
         updatedAt: new Date(),
       })
-      .returning("*");
 
     return successResponse(res, newUser, 201, "User registered successfully");
   } catch (error) {
@@ -58,6 +57,8 @@ export const register = async (req, res) => {
         validationErrors
       );
     }
+    console.error("Error occurred:", error);
+
     return errorResponse(req, res, error.message, 401);
   }
 };
@@ -67,7 +68,12 @@ export const login = async (req, res) => {
 };
 
 export const allUsers = async (req, res) => {
-  //
+  try {
+    const users = await db.select().from(usersTable);
+    return successResponse(res, users, 200, "users fetched");
+  } catch (error) {
+    return errorResponse(req, res, error.message, 401);
+  }
 };
 
 export const profile = async (req, res) => {

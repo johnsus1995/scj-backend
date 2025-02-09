@@ -4,6 +4,7 @@ import { successResponse, errorResponse } from "../../helpers/index.js";
 import { loginSchema, registerSchema } from "./user.validator.js";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   try {
@@ -53,10 +54,16 @@ export const register = async (req, res) => {
       const validationErrors = error.inner.map((err) => ({
         message: err.message,
       }));
-      return errorResponse(res, "Validation failed", 400, validationErrors);
+      return errorResponse(
+        req,
+        res,
+        "Validation failed",
+        400,
+        validationErrors
+      );
     }
     console.error("Error occurred:", error);
-    return errorResponse(res, error.message, 500);
+    return errorResponse(req, res, error.message, 500);
   }
 };
 
@@ -77,20 +84,17 @@ export const login = async (req, res) => {
       throw new Error("Incorrect Email Id/Password");
     }
 
-    // Verify password using bcrypt
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       throw new Error("Incorrect Email Id/Password");
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user.id, email: user.email },
       process.env.SECRET,
-      { expiresIn: "7d" } // Token expires in 7 days
+      { expiresIn: "7d" }
     );
 
-    // Exclude password from response
     const { password: _, ...userWithoutPassword } = user;
 
     return successResponse(
@@ -101,9 +105,9 @@ export const login = async (req, res) => {
     );
   } catch (error) {
     if (error.name === "ValidationError") {
-      return errorResponse(res, "Validation failed", 400, error.errors);
+      return errorResponse(req, res, "Validation failed", 400, error.errors);
     }
-    return errorResponse(res, error.message);
+    return errorResponse(req, res, error.message, 500, null);
   }
 };
 

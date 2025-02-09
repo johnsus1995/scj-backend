@@ -6,7 +6,7 @@ export const addNewExamSchema = yup.object().shape({
   description: yup.string().required("description is required"),
   duration: yup.number().required("duration is required"),
   deadline: yup.date().required("deadline is required"),
-  published: yup.boolean().required("published is required"),
+  published: yup.boolean(),
 });
 
 export const attemptExamSchema = yup.object().shape({

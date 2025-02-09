@@ -8,8 +8,14 @@ export const addNewExam = async (req, res) => {
   try {
     await addNewExamSchema.validate(req.body, { abortEarly: false });
 
-    const { createdBy, title, description, deadline, duration, published } =
-      req.body;
+    const {
+      createdBy,
+      title,
+      description,
+      deadline,
+      duration,
+      published = false,
+    } = req.body;
 
     const newExam = await db.insert(examsTable).values({
       createdBy,
@@ -20,7 +26,9 @@ export const addNewExam = async (req, res) => {
       published,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    })
+    .returning();
+
 
     return successResponse(res, newExam, 201, "New exam added successfully");
   } catch (error) {
@@ -118,7 +126,12 @@ export const attemptExam = async (req, res) => {
       updatedAt: new Date(),
     });
 
-    return successResponse(res, newExamAttempt, 201, "New exam attempt started");
+    return successResponse(
+      res,
+      newExamAttempt,
+      201,
+      "New exam attempt started"
+    );
   } catch (error) {
     if (error.name === "ValidationError") {
       const validationErrors = error.inner.map((err) => ({

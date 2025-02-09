@@ -27,10 +27,9 @@ export const addNewExam = async (req, res) => {
       createdAt: new Date(),
       updatedAt: new Date(),
     })
-    .returning();
+    .returning()
 
-
-    return successResponse(res, newExam, 201, "New exam added successfully");
+    return successResponse(res, newExam[0], 201, "New exam added successfully");
   } catch (error) {
     if (error.name === "ValidationError") {
       const validationErrors = error.inner.map((err) => ({

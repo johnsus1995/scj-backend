@@ -3,8 +3,9 @@ import * as examController from "../controllers/exam/exam.controller.js";
 
 const router = express.Router();
 
-router.post("/exams", examController.addNewExam);
-router.get("/exams/:userId", examController.getAllExams);
-router.get("/exams/:id", examController.getExamById);
+router.get("/:userId", examController.getAllExams);
+router.get("/:id", examController.getExamById);
+router.post("/add", examController.addNewExam);
+router.post("/attempt", examController.attemptExam);
 
 export default router;

@@ -8,6 +8,7 @@ import userRoutes from "./src/routes/users.js";
 import examRoutes from "./src/routes/exams.js";
 import questionRoutes from "./src/routes/questions.js";
 import correctAnswerRoutes from "./src/routes/correctAnswers.js";
+import attemptAnswerRoutes from "./src/routes/attemptAnswer.js";
 
 import apiMiddleware from "./src/middleware/apiAuth.js";
 import adminMiddleware from "./src/middleware/adminAuth.js";
@@ -26,9 +27,10 @@ app.use(morgan("common"));
 
 app.use("/public", publicRoutes);
 app.use("/api", userRoutes);
-app.use("/api", examRoutes);
-app.use("/api", questionRoutes);
+app.use("/api/exams", examRoutes);
+app.use("/api/questions", questionRoutes);
 app.use("/api", correctAnswerRoutes);
+app.use("/api/answers", attemptAnswerRoutes);
 app.use(errorHandler);
 
 app.get("/", (req, res) => {

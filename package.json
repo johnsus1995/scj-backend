@@ -20,6 +20,7 @@
     "drizzle-orm": "^0.39.0",
     "drizzle-orm-pg": "^0.16.3",
     "express": "^4.16.4",
+    "fast-levenshtein": "^3.0.0",
     "http": "0.0.0",
     "jsonwebtoken": "^8.5.1",
     "morgan": "^1.10.0",

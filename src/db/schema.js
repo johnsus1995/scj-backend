@@ -6,7 +6,7 @@ import {
   boolean,
   serial,
   date,
-  text
+  text,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -21,10 +21,6 @@ export const usersTable = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
-
-export const usersRelations = relations(usersTable, ({ many }) => ({
-  exams: many(examsTable), // A user can have many exams
-}));
 
 export const examsTable = pgTable("exams", {
   id: serial("id").primaryKey(),
@@ -62,6 +58,25 @@ export const correctAnswersTable = pgTable("correct_answers", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const examAttemptsTable = pgTable("exam_attempts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => usersTable.id, { onDelete: "cascade" }),
+  examId: integer("exam_id")
+    .notNull()
+    .references(() => examsTable.id, { onDelete: "cascade" }),
+  startedAt: timestamp("started_at").defaultNow(),
+  completedAt: timestamp("completed_at"),
+  score: integer("score"),
+  status: varchar("status", { length: 50 }).default("Pending"),
+});
+
+export const usersRelations = relations(usersTable, ({ many }) => ({
+  exams: many(examsTable), // A user can have many exams
+  attemptedExams: many(examAttemptsTable),
+}));
+
 export const examsRelations = relations(examsTable, ({ one, many }) => ({
   author: one(usersTable, {
     fields: [examsTable.createdBy], // The foreign key in examsTable
@@ -90,3 +105,38 @@ export const correctAnswersRelations = relations(
     }),
   })
 );
+
+export const attemptedAnswersTable = pgTable("attempted_answers", {
+  id: serial("id").primaryKey(),
+  attemptExamId: integer("attempted_exam_id")
+    .notNull()
+    .references(() => examAttemptsTable.id, { onDelete: "cascade" }), // Links to an exam attempt
+  questionId: integer("question_id")
+    .notNull()
+    .references(() => questionsTable.id, { onDelete: "cascade" }), // Links to a specific question
+  answerText: text("answer_text").notNull(), // The student's answer
+  marksAwarded: integer("marks_awarded").default(0), // Marks awarded after evaluation
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const examAttemptsRelations = relations(
+  examAttemptsTable,
+  ({ one, many }) => ({
+    user: one(usersTable, {
+      fields: [examAttemptsTable.userId],
+      references: [usersTable.id],
+    }),
+    exam: one(examsTable, {
+      fields: [examAttemptsTable.examId],
+      references: [examsTable.id],
+    }),
+    attemptedAnswers: many(attemptedAnswersTable), // Stores the student's answers
+  })
+);
+
+
+export const attemptedAnswersRelations = relations(attemptedAnswersTable, ({ one }) => ({
+  attempt: one(examAttemptsTable, { fields: [attemptedAnswersTable.attemptId], references: [examAttemptsTable.id] }),
+  question: one(questionsTable, { fields: [attemptedAnswersTable.questionId], references: [questionsTable.id] }),
+}));

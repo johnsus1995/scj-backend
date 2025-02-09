@@ -3,6 +3,6 @@ import * as questionController from "../controllers/questions/question.controlle
 
 const router = express.Router();
 
-router.post("/questions", questionController.addNewQuestion);
+router.post("/add", questionController.addNewQuestion);
 
 export default router;

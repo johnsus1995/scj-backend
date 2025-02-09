@@ -1,4 +1,4 @@
-import { correctAnswersTable, questionsTable } from "../../db/schema.js";
+import { correctAnswersTable } from "../../db/schema.js";
 import db from "../../db/index.js";
 import { successResponse, errorResponse } from "../../helpers/index.js";
 import { addNewCorrectAnswerSchema } from "./correctAnswers.validator.js";

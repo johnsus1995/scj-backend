@@ -1,9 +1,82 @@
 {
-  "id": "9057b53b-76e9-456b-ab79-1cd6ea53484b",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "04e6159d-e319-46dc-bee0-022b0e3ce7d2",
+  "prevId": "9057b53b-76e9-456b-ab79-1cd6ea53484b",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.correct_answers": {
+      "name": "correct_answers",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "question_id": {
+          "name": "question_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answer_text": {
+          "name": "answer_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "keywords": {
+          "name": "keywords",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "correct_answers_question_id_questions_id_fk": {
+          "name": "correct_answers_question_id_questions_id_fk",
+          "tableFrom": "correct_answers",
+          "tableTo": "questions",
+          "columnsFrom": [
+            "question_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "correct_answers_question_id_unique": {
+          "name": "correct_answers_question_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "question_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.exams": {
       "name": "exams",
       "schema": "",

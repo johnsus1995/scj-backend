@@ -8,15 +8,15 @@ export const successResponse = (res, data, code = 200, message = "") =>
   });
 
 export const errorResponse = (
-  req,
+  req = null,
   res,
-  errorMessage = "Something went wrong!",
+  message = "Something went wrong!",
   code = 500,
   error = {}
 ) =>
   res.status(code).json({
     code,
-    errorMessage,
+    message,
     error,
     data: null,
     success: false,
@@ -48,4 +48,3 @@ export const uniqueId = (length = 13) => {
   }
   return result;
 };
-

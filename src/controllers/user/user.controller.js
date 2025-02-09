@@ -1,8 +1,8 @@
 import { usersTable } from "../../db/schema.js";
 import db from "../../db/index.js"; // Assuming you have a db connection file
 import { successResponse, errorResponse } from "../../helpers/index.js";
-import { registerSchema } from "./user.validator.js";
-import crypto from "crypto";
+import { loginSchema, registerSchema } from "./user.validator.js";
+import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
 export const register = async (req, res) => {
@@ -14,57 +14,97 @@ export const register = async (req, res) => {
     const existingUser = await db
       .select()
       .from(usersTable)
-      .where(eq(usersTable.email, email));
+      .where(eq(usersTable.email, email))
+      .then((users) => (users.length > 0 ? users[0] : null));
 
-    if (existingUser.length > 0) {
+    if (existingUser) {
       return errorResponse(
         req,
         res,
         "User already exists with this email",
-        400
+        400,
+        null
       );
     }
 
-    const hashedPassword = crypto
-      .createHash("md5")
-      .update(password)
-      .digest("hex");
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = await db
-      .insert(usersTable)
-      .values({
-        name,
-        email,
-        scjId,
-        password: hashedPassword,
-        roleId,
-        isAdmin,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
+    const newUser = await db.insert(usersTable).values({
+      name,
+      email,
+      scjId,
+      password: hashedPassword,
+      roleId,
+      isAdmin,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
-    return successResponse(res, newUser, 201, "User registered successfully");
+    const { password: _, ...userWithoutPassword } = newUser;
+
+    return successResponse(
+      res,
+      userWithoutPassword,
+      201,
+      "User registered successfully"
+    );
   } catch (error) {
     if (error.name === "ValidationError") {
       const validationErrors = error.inner.map((err) => ({
         message: err.message,
       }));
-      return errorResponse(
-        req,
-        res,
-        "Validation failed",
-        400,
-        validationErrors
-      );
+      return errorResponse(res, "Validation failed", 400, validationErrors);
     }
     console.error("Error occurred:", error);
-
-    return errorResponse(req, res, error.message, 401);
+    return errorResponse(res, error.message, 500);
   }
 };
 
 export const login = async (req, res) => {
-  //
+  try {
+    await loginSchema.validate(req.body, { abortEarly: false });
+
+    const { email, password } = req.body;
+
+    // Fetch user
+    const user = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, email))
+      .then((users) => users[0]); // Extract first user
+
+    if (!user) {
+      throw new Error("Incorrect Email Id/Password");
+    }
+
+    // Verify password using bcrypt
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      throw new Error("Incorrect Email Id/Password");
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.SECRET,
+      { expiresIn: "7d" } // Token expires in 7 days
+    );
+
+    // Exclude password from response
+    const { password: _, ...userWithoutPassword } = user;
+
+    return successResponse(
+      res,
+      { user: userWithoutPassword, token },
+      200,
+      "Welcome back!"
+    );
+  } catch (error) {
+    if (error.name === "ValidationError") {
+      return errorResponse(res, "Validation failed", 400, error.errors);
+    }
+    return errorResponse(res, error.message);
+  }
 };
 
 export const allUsers = async (req, res) => {

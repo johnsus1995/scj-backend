@@ -72,9 +72,38 @@ export const examAttemptsTable = pgTable("exam_attempts", {
   status: varchar("status", { length: 50 }).default("Pending"),
 });
 
+export const rolesTable = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  name: text("name").unique().notNull(), 
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const userRolesTable = pgTable("user_roles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
+  roleId: integer("role_id").notNull().references(() => rolesTable.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const usersRelations = relations(usersTable, ({ many }) => ({
   exams: many(examsTable), // A user can have many exams
   attemptedExams: many(examAttemptsTable),
+  userRoles: many(userRolesTable), // A user can have multiple roles
+}));
+
+export const rolesRelations = relations(rolesTable, ({ many }) => ({
+  userRoles: many(userRolesTable), // A role can belong to multiple users
+}));
+
+export const userRolesRelations = relations(userRolesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [userRolesTable.userId], // Foreign key in userRolesTable
+    references: [usersTable.id], // Primary key in usersTable
+  }),
+  role: one(rolesTable, {
+    fields: [userRolesTable.roleId], // Foreign key in userRolesTable
+    references: [rolesTable.id], // Primary key in rolesTable
+  }),
 }));
 
 export const examsRelations = relations(examsTable, ({ one, many }) => ({

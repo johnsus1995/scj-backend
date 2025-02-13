@@ -11,7 +11,7 @@ import {
 import { relations } from "drizzle-orm";
 
 export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   name: varchar("name", { length: 255 }).notNull(),
   email: varchar("email", { length: 255 }).notNull().unique(),
   scjId: integer("scj_id").notNull(),
@@ -23,7 +23,7 @@ export const usersTable = pgTable("users", {
 });
 
 export const examsTable = pgTable("exams", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   createdBy: integer("created_by")
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
@@ -37,7 +37,7 @@ export const examsTable = pgTable("exams", {
 });
 
 export const questionsTable = pgTable("questions", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   examId: integer("exam_id")
     .notNull()
     .references(() => examsTable.id, { onDelete: "cascade" }),
@@ -47,7 +47,7 @@ export const questionsTable = pgTable("questions", {
 });
 
 export const correctAnswersTable = pgTable("correct_answers", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   questionId: integer("question_id")
     .notNull()
     .unique()
@@ -59,7 +59,7 @@ export const correctAnswersTable = pgTable("correct_answers", {
 });
 
 export const examAttemptsTable = pgTable("exam_attempts", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   userId: integer("user_id")
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
@@ -73,13 +73,13 @@ export const examAttemptsTable = pgTable("exam_attempts", {
 });
 
 export const rolesTable = pgTable("roles", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   name: text("name").unique().notNull(), 
   createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const userRolesTable = pgTable("user_roles", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   userId: integer("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
   roleId: integer("role_id").notNull().references(() => rolesTable.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow(),
@@ -136,7 +136,7 @@ export const correctAnswersRelations = relations(
 );
 
 export const attemptedAnswersTable = pgTable("attempted_answers", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey().notNull().generatedAlwaysAsIdentity({ startWith: 1000 }),
   attemptExamId: integer("attempted_exam_id")
     .notNull()
     .references(() => examAttemptsTable.id, { onDelete: "cascade" }), // Links to an exam attempt

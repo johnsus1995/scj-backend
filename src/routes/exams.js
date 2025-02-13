@@ -4,9 +4,9 @@ import verifyToken from "../middleware/apiAuth.js";
 
 const router = express.Router();
 
-router.get("/:userId", examController.getAllExams);
-router.get("/:id", examController.getExamById);
-router.post("/add",verifyToken, examController.addNewExam);
-router.post("/attempt", examController.attemptExam);
+router.get("/:userId", verifyToken, examController.getAllExams);
+router.get("/:id", verifyToken, examController.getExamById);
+router.post("/add", verifyToken, examController.addNewExam);
+router.post("/attempt", verifyToken, examController.attemptExam);
 
 export default router;

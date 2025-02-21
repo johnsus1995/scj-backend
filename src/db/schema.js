@@ -120,7 +120,7 @@ export const questionRelations = relations(questionsTable, ({ one }) => ({
     references: [examsTable.id],
   }),
   correctAnswer: one(correctAnswersTable, {
-    fields: questionsTable.id,
+    fields: [questionsTable.id],
     references: [correctAnswersTable.questionId],
   }),
 }));
@@ -164,8 +164,7 @@ export const examAttemptsRelations = relations(
   })
 );
 
-
 export const attemptedAnswersRelations = relations(attemptedAnswersTable, ({ one }) => ({
-  attempt: one(examAttemptsTable, { fields: [attemptedAnswersTable.attemptId], references: [examAttemptsTable.id] }),
+  attempt: one(examAttemptsTable, { fields: [attemptedAnswersTable.attemptExamId], references: [examAttemptsTable.id] }),
   question: one(questionsTable, { fields: [attemptedAnswersTable.questionId], references: [questionsTable.id] }),
 }));

@@ -9,14 +9,14 @@ export const addNewQuestion = async (req, res) => {
 
     const { examId, text } = req.body;
 
-    const newExam = await db.insert(questionsTable).values({
+    const newQuestion = await db.insert(questionsTable).values({
       examId,
       text,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
 
-    return successResponse(res, newExam, 201, "New question added.");
+    return successResponse(res, newQuestion, 201, "New question added.");
   } catch (error) {
     if (error.name === "ValidationError") {
       const validationErrors = error.inner.map((err) => ({

@@ -10,8 +10,6 @@ import questionRoutes from "./src/routes/questions.js";
 import correctAnswerRoutes from "./src/routes/correctAnswers.js";
 import attemptAnswerRoutes from "./src/routes/attemptAnswer.js";
 
-import apiMiddleware from "./src/middleware/apiAuth.js";
-import adminMiddleware from "./src/middleware/adminAuth.js";
 import errorHandler from "./src/middleware/errorHandler.js";
 
 dotenv.config();
@@ -29,7 +27,7 @@ app.use("/public", publicRoutes);
 app.use("/api", userRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/questions", questionRoutes);
-app.use("/api", correctAnswerRoutes);
+app.use("/api/a", correctAnswerRoutes);
 app.use("/api/answers", attemptAnswerRoutes);
 app.use(errorHandler);
 

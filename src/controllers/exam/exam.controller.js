@@ -8,8 +8,9 @@ export const addNewExam = async (req, res) => {
   try {
     await addNewExamSchema.validate(req.body, { abortEarly: false });
 
+    const { userId } = req.user;
+
     const {
-      createdBy,
       title,
       description,
       deadline,
@@ -17,17 +18,19 @@ export const addNewExam = async (req, res) => {
       published = false,
     } = req.body;
 
-    const newExam = await db.insert(examsTable).values({
-      createdBy,
-      title,
-      description,
-      duration,
-      deadline,
-      published,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning()
+    const newExam = await db
+      .insert(examsTable)
+      .values({
+        createdBy: userId,
+        title,
+        description,
+        duration,
+        deadline,
+        published,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
 
     return successResponse(res, newExam[0], 201, "New exam added successfully");
   } catch (error) {
@@ -84,9 +87,9 @@ export const getExamById = async (req, res) => {
  * Get an exam by ID along with author details
  * @route GET /api/exams/:id
  */
-export const getAllExams = async (req, res) => {
+export const getAllExamsByCreatedBy = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { userId } = req.user; //from auth middleware
 
     const exams = await db
       .select({
@@ -99,6 +102,30 @@ export const getAllExams = async (req, res) => {
       .from(examsTable)
       .leftJoin(usersTable, eq(examsTable.createdBy, usersTable.id))
       .where(eq(examsTable.createdBy, userId));
+
+    if (!exams.length) {
+      return res.status(404).json({ message: "Exam not found" });
+    }
+
+    res.json(exams);
+  } catch (error) {
+    console.error("Error fetching exam:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+export const getAllExams = async (req, res) => {
+  try {
+    const exams = await db
+      .select({
+        ...examsTable,
+        author: {
+          id: usersTable.id,
+          name: usersTable.name,
+        },
+      })
+      .from(examsTable)
+      .leftJoin(usersTable, eq(examsTable.createdBy, usersTable.id));
 
     if (!exams.length) {
       return res.status(404).json({ message: "Exam not found" });

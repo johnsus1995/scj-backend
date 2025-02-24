@@ -12,7 +12,7 @@ const verifyToken = async (req, res, next) => {
     
     const decoded = jwt.verify(token, process.env.SECRET);
 
-    req.user = decoded.user;
+    req.user = decoded;
 
     return next();
   } catch (error) {

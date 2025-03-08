@@ -17,7 +17,7 @@ export const addNewCorrectAnswer = async (req, res) => {
       updatedAt: new Date(),
     });
 
-    return successResponse(res, newCorrectAns, 201, "New newCorrectAns added.");
+    return successResponse(res, newCorrectAns, 201, "New correct answer added.");
   } catch (error) {
     if (error.name === "ValidationError") {
       const validationErrors = error.inner.map((err) => ({

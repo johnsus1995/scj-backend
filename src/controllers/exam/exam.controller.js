@@ -176,3 +176,31 @@ export const attemptExam = async (req, res) => {
     return errorResponse(req, res, error.message, 401);
   }
 };
+
+/**
+ * Delete an exam by ID
+ * @route DELETE /api/exams/:id
+ */
+export const deleteExam = async (req, res) => {
+  try {
+    const { id } = req.params; // Get exam ID from request parameters
+
+    const exams = await db
+      .select()
+      .from(examsTable)
+      .where(eq(examsTable.id, id));
+
+    if (!exams.length) {
+      return errorResponse(req, res, "Exam does not exist", 404);
+    }
+
+    await db.delete(examsTable).where(eq(examsTable.id, id));
+
+
+    return successResponse(res, { id: id }, 200, "Exam deleted successfully");
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return errorResponse(req, res, "Failed to delete exam", 500);
+  }
+};
+

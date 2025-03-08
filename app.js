@@ -27,7 +27,7 @@ app.use("/public", publicRoutes);
 app.use("/api", userRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/questions", questionRoutes);
-app.use("/api/a", correctAnswerRoutes);
+app.use("/api/correct", correctAnswerRoutes);
 app.use("/api/answers", attemptAnswerRoutes);
 app.use(errorHandler);
 

@@ -4,6 +4,7 @@ import verifyToken from "../middleware/apiAuth.js";
 
 const router = express.Router();
 
+router.get("/", verifyToken, questionController.getAllQuestions);
 router.post("/add", verifyToken, questionController.addNewQuestion);
 
 export default router;

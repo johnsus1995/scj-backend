@@ -9,6 +9,6 @@ router.get("/own", verifyToken, examController.getAllExamsByCreatedBy);
 router.get("/:id", verifyToken, examController.getExamById);
 router.post("/add", verifyToken, examController.addNewExam);
 router.post("/attempt", verifyToken, examController.attemptExam);
+router.delete("/:id", verifyToken, examController.deleteExam);
 
 export default router;
- 

@@ -64,3 +64,17 @@ export const getAllQuestions = async (req, res) => {
     return errorResponse(req, res, error.message, 401);
   }
 };
+
+
+export const getNextQuestion = async (req, res) => {
+  const { examId } = req.query;
+
+  try {
+    
+    const resData = null
+
+    return successResponse(res, resData, 200, "Listing questions");
+  } catch (error) {
+    return errorResponse(req, res, error.message, 401);
+  }
+};

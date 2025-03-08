@@ -183,7 +183,7 @@ export const attemptExam = async (req, res) => {
  */
 export const deleteExam = async (req, res) => {
   try {
-    const { id } = req.params; // Get exam ID from request parameters
+    const { id } = req.params;
 
     const exams = await db
       .select()
@@ -196,7 +196,6 @@ export const deleteExam = async (req, res) => {
 
     await db.delete(examsTable).where(eq(examsTable.id, id));
 
-
     return successResponse(res, { id: id }, 200, "Exam deleted successfully");
   } catch (error) {
     console.error("Error occurred:", error);
@@ -204,3 +203,48 @@ export const deleteExam = async (req, res) => {
   }
 };
 
+/**
+ * Delete an exam by ID
+ * @route POST /api/exams/:id/start-attempt
+ */
+export const startAttemptExam = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const hasAttempted = await db
+      .select()
+      .from(examAttemptsTable)
+      .where(eq(examAttemptsTable.userId, req.user.userId))
+      .where(eq(examAttemptsTable.examId, id));
+
+    let examAttempt = null;
+
+    if (hasAttempted.length) {
+      examAttempt = await db
+        .update(examAttemptsTable)
+        .set({
+          updatedAt: new Date(),
+          status: "In-progress",
+        })
+        .where(eq(examAttemptsTable.userId, req.user.userId))
+        .where(eq(examAttemptsTable.examId, id))
+        .returning();
+    } else {
+      examAttempt = await db
+        .insert(examAttemptsTable)
+        .values({
+          userId: req.user.userId,
+          examId: id,
+          startedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
+    }
+
+    return successResponse(res, examAttempt[0], 200, "Exam attempt started");
+  } catch (error) {
+    console.error("Error occurred:", error);
+    return errorResponse(req, res, "Failed to update/add attempted exam", 500);
+  }
+};

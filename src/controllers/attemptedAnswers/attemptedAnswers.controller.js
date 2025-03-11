@@ -5,7 +5,6 @@ import { attemptAnswerSchema } from "./attemptedAnswers.validator.js";
 import levenshtein from "fast-levenshtein";
 import { and, eq } from "drizzle-orm";
 
-
 export const attemptAnswer = async (req, res) => {
   try {
     await attemptAnswerSchema.validate(req.body, { abortEarly: false });
@@ -76,11 +75,15 @@ export const attemptAnswer = async (req, res) => {
       marksAwarded = 0;
     }
 
-    //if questionId exist then update the answer
     const existingAnswer = await db
       .select()
       .from(attemptedAnswersTable)
-      .where(and(eq(attemptedAnswersTable.attemptExamId, attemptExamId), eq(attemptedAnswersTable.questionId, questionId)))
+      .where(
+        and(
+          eq(attemptedAnswersTable.attemptExamId, attemptExamId),
+          eq(attemptedAnswersTable.questionId, questionId)
+        )
+      )
       .limit(1);
 
     if (existingAnswer.length) {
@@ -107,8 +110,7 @@ export const attemptAnswer = async (req, res) => {
       );
     }
 
-    // ✅ Save the attempt in the DB
-    const newAnsAttempt = await db
+    await db
       .insert(attemptedAnswersTable)
       .values({
         questionId,
@@ -140,11 +142,11 @@ export const attemptAnswer = async (req, res) => {
         req,
         res,
         "Validation failed",
-        400,
+        422,
         validationErrors
       );
     }
 
-    return errorResponse(req, res, error.message, 401);
+    return errorResponse(req, res, error.message, 501);
   }
 };

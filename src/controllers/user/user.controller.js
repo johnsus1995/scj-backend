@@ -117,7 +117,7 @@ export const allUsers = async (req, res) => {
     const users = await db.select().from(usersTable);
     return successResponse(res, users, 200, "users fetched");
   } catch (error) {
-    return errorResponse(req, res, error.message, 401);
+    return errorResponse(req, res, error.message, 501);
   }
 };
 

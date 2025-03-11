@@ -48,7 +48,7 @@ export const addNewExam = async (req, res) => {
     }
     console.error("Error occurred:", error);
 
-    return errorResponse(req, res, error.message, 401);
+    return errorResponse(req, res, error.message, 501);
   }
 };
 
@@ -173,7 +173,7 @@ export const attemptExam = async (req, res) => {
     }
     console.error("Error occurred:", error);
 
-    return errorResponse(req, res, error.message, 401);
+    return errorResponse(req, res, error.message, 501);
   }
 };
 

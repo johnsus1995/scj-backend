@@ -2,6 +2,7 @@ import {
   attemptedAnswersTable,
   examsTable,
   questionsTable,
+  examAttemptsTable
 } from "../../db/schema.js";
 import db from "../../db/index.js";
 import { successResponse, errorResponse } from "../../helpers/index.js";
@@ -40,7 +41,7 @@ export const addNewQuestion = async (req, res) => {
     }
     console.error("Error occurred:", error);
 
-    return errorResponse(req, res, error.message, 401);
+    return errorResponse(req, res, error.message, 501);
   }
 };
 
@@ -65,7 +66,7 @@ export const getAllQuestions = async (req, res) => {
 
     return successResponse(res, resData, 200, "Listing questions");
   } catch (error) {
-    return errorResponse(req, res, error.message, 401);
+    return errorResponse(req, res, error.message, 501);
   }
 };
 
@@ -113,7 +114,7 @@ export const getNextQuestion = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching next question:", error);
-    return res.status(401).json({
+    return res.status(500).json({
       message: "Something went wrong",
       error: error.message,
     });

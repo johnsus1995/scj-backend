@@ -6,5 +6,8 @@ const router = express.Router();
 
 router.get("/", verifyToken, questionController.getAllQuestions);
 router.post("/add", verifyToken, questionController.addNewQuestion);
+router.post("/next", verifyToken, questionController.getNextQuestion);
+
+
 
 export default router;

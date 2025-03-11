@@ -3,7 +3,8 @@ import db from "../../db/index.js";
 import { successResponse, errorResponse } from "../../helpers/index.js";
 import { attemptAnswerSchema } from "./attemptedAnswers.validator.js";
 import levenshtein from "fast-levenshtein";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+
 
 export const attemptAnswer = async (req, res) => {
   try {
@@ -14,7 +15,6 @@ export const attemptAnswer = async (req, res) => {
     const correctAnswer = await db
       .select()
       .from(correctAnswersTable)
-
       .where(eq(correctAnswersTable.questionId, questionId))
       .limit(1);
 
@@ -27,51 +27,109 @@ export const attemptAnswer = async (req, res) => {
       );
     }
 
-
     const { answerText: correctText, keywords } = correctAnswer[0];
 
+    // ✅ Split the answer into words (clean out HTML tags)
+    const cleanAnswerText = answerText
+      .replace(/<[^>]*>/g, "") // Remove HTML tags like <p>, <b>, etc.
+      .toLowerCase()
+      .split(/\s+/); // Split by space
 
-    // Fuzzy matching using Levenshtein distance
-    const similarityScore =
-      1 -
-      levenshtein.get(answerText.toLowerCase(), correctText.toLowerCase()) /
-        Math.max(answerText.length, correctText.length);
+    // ✅ Fuzzy compare keywords
+    let matchedKeywords = 0;
+    const missedKeywords = [];
 
-    // Check keyword presence
-    let keywordMatches = 0;
-    if (keywords && Array.isArray(keywords)) {
-      const lowerCasedAnswer = answerText.toLowerCase();
-      keywordMatches = keywords.filter((kw) =>
-        lowerCasedAnswer.includes(kw.toLowerCase())
-      ).length;
-    }
+    keywords.forEach((keyword) => {
+      let isMatched = false;
 
-    let marksAwarded = 0;
-    if (similarityScore > 0.9) {
-      marksAwarded = 10; // Full marks for near-perfect match
-    } else if (similarityScore > 0.75) {
-      marksAwarded = 7; // Partial marks for decent similarity
-    } else if (keywordMatches > 0) {
-      marksAwarded = 5; // Reward keywords even if sentence structure is different
-    } else {
-      marksAwarded = 2; // Minimal marks for attempt
-    }
+      // Check if the keyword (even with spelling mistakes) exists in the answerText
+      cleanAnswerText.forEach((word) => {
+        const distance = levenshtein.get(word, keyword.toLowerCase());
 
+        if (distance <= 2) {
+          // Distance of 2 means the word is approximately similar (fuzzy match)
+          isMatched = true;
+        }
+      });
 
-    const newAnsAttempt = await db.insert(attemptedAnswersTable).values({
-      questionId,
-      attemptExamId,
-      answerText,
-      marksAwarded,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      if (isMatched) {
+        matchedKeywords++;
+      } else {
+        missedKeywords.push(keyword);
+      }
     });
+
+    // ✅ Calculate Marks Based On Keywords
+    const totalKeywords = keywords.length;
+    const keywordMatchPercentage = (matchedKeywords / totalKeywords) * 100;
+    let marksAwarded = 0;
+
+    if (keywordMatchPercentage === 100) {
+      marksAwarded = 10;
+    } else if (keywordMatchPercentage >= 75) {
+      marksAwarded = 7;
+    } else if (keywordMatchPercentage >= 50) {
+      marksAwarded = 5;
+    } else if (keywordMatchPercentage >= 25) {
+      marksAwarded = 3;
+    } else {
+      marksAwarded = 0;
+    }
+
+    //if questionId exist then update the answer
+    const existingAnswer = await db
+      .select()
+      .from(attemptedAnswersTable)
+      .where(and(eq(attemptedAnswersTable.attemptExamId, attemptExamId), eq(attemptedAnswersTable.questionId, questionId)))
+      .limit(1);
+
+    if (existingAnswer.length) {
+      const updatedAnswer = await db
+        .update(attemptedAnswersTable)
+        .set({
+          answerText,
+          marksAwarded,
+          updatedAt: new Date(),
+        })
+        .where(eq(attemptedAnswersTable.id, existingAnswer[0].id))
+        .returning();
+
+      return successResponse(
+        res,
+        {
+          marksAwarded,
+          matchedKeywords,
+          missedKeywords,
+          percentage: keywordMatchPercentage.toFixed(2),
+        },
+        201,
+        "Answer updated successfully."
+      );
+    }
+
+    // ✅ Save the attempt in the DB
+    const newAnsAttempt = await db
+      .insert(attemptedAnswersTable)
+      .values({
+        questionId,
+        attemptExamId,
+        answerText,
+        marksAwarded,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning();
 
     return successResponse(
       res,
-      newAnsAttempt,
+      {
+        marksAwarded,
+        matchedKeywords,
+        missedKeywords,
+        percentage: keywordMatchPercentage.toFixed(2),
+      },
       201,
-      "New answer attempt submitted."
+      "Answer evaluated successfully."
     );
   } catch (error) {
     if (error.name === "ValidationError") {
@@ -86,7 +144,6 @@ export const attemptAnswer = async (req, res) => {
         validationErrors
       );
     }
-    console.error("Error occurred:", error);
 
     return errorResponse(req, res, error.message, 401);
   }

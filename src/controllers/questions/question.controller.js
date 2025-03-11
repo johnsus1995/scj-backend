@@ -1,8 +1,12 @@
-import { examsTable, questionsTable } from "../../db/schema.js";
+import {
+  attemptedAnswersTable,
+  examsTable,
+  questionsTable,
+} from "../../db/schema.js";
 import db from "../../db/index.js";
 import { successResponse, errorResponse } from "../../helpers/index.js";
 import { addNewQuestionSchema } from "./question.validator.js";
-import { eq } from "drizzle-orm";
+import { and, eq, ne, notInArray } from "drizzle-orm";
 
 export const addNewQuestion = async (req, res) => {
   try {
@@ -65,16 +69,53 @@ export const getAllQuestions = async (req, res) => {
   }
 };
 
-
 export const getNextQuestion = async (req, res) => {
-  const { examId } = req.query;
+  const { examId, attemptedExamId } = req.body;
 
   try {
+    const answeredQuestions = await db
+    .select({ questionId: attemptedAnswersTable.questionId })
+    .from(attemptedAnswersTable)
+    .where(eq(attemptedAnswersTable.attemptExamId, examId));
+  
+  const answeredIds = answeredQuestions.map((q) => q.questionId);
+  
+  const nextQuestion = await db
+    .select()
+    .from(questionsTable)
+    .where(
+      and(
+        eq(questionsTable.examId, examId),
+        notInArray(questionsTable.id, answeredIds)
+      )
+    )
+    .limit(1);
     
-    const resData = null
 
-    return successResponse(res, resData, 200, "Listing questions");
+    if (nextQuestion.length === 0) {
+      await db
+        .update(examAttemptsTable)
+        .set({
+          completedAt: new Date(),
+          status: "Completed",
+        })
+        .where(eq(examAttemptsTable.id, attemptedExamId));
+
+      return res.status(200).json({
+        message: "Exam completed successfully",
+      });
+    }
+
+    // ✅ Step 4: Return the next question
+    return res.status(200).json({
+      message: "Next question",
+      question: nextQuestion[0],
+    });
   } catch (error) {
-    return errorResponse(req, res, error.message, 401);
+    console.error("Error fetching next question:", error);
+    return res.status(401).json({
+      message: "Something went wrong",
+      error: error.message,
+    });
   }
 };

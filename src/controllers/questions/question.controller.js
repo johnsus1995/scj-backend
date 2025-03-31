@@ -54,12 +54,21 @@ export const getAllQuestions = async (req, res) => {
       .from(examsTable)
       .where(eq(examsTable.id, examId));
 
+      const attemptedExam = await db.select().from(examAttemptsTable).where(
+        and(
+          eq(examAttemptsTable.examId, examId),
+          eq(examAttemptsTable.userId, req.user.userId),
+          // ne(examAttemptsTable.status, "Completed")
+        )
+      );
+
     const questions = await db
       .select()
       .from(questionsTable)
       .where(eq(questionsTable.examId, examId));
 
     const resData = {
+      attemptedExam: attemptedExam[0] || null,
       exam: exams[0] || null,
       questions: questions,
     };
@@ -103,6 +112,7 @@ export const getNextQuestion = async (req, res) => {
         .where(eq(examAttemptsTable.id, attemptedExamId));
 
       return res.status(200).json({
+        lastQuestionDone: true,
         message: "Exam completed successfully",
       });
     }

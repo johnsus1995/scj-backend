@@ -150,3 +150,18 @@ export const attemptAnswer = async (req, res) => {
     return errorResponse(req, res, error.message, 501);
   }
 };
+
+export const getAttemptedAnswers = async (req, res) => {
+  try {
+    const { attemptExamId } = req.query;
+
+    const attemptedAnswers = await db
+      .select()
+      .from(attemptedAnswersTable)
+      .where(eq(attemptedAnswersTable.attemptExamId, attemptExamId));
+
+    return successResponse(res, attemptedAnswers, 200,'Attempted answers fetched successfully.');
+  } catch (error) {
+    return errorResponse(req, res, error.message, 501);
+  }
+}

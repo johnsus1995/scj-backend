@@ -4,5 +4,6 @@ import * as attemptedAnswerController from "../controllers/attemptedAnswers/atte
 const router = express.Router();
 
 router.post("/attempt", attemptedAnswerController.attemptAnswer);
+router.get("/attempted-answers", attemptedAnswerController.getAttemptedAnswers);
 
 export default router;
